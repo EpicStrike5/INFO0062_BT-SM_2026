@@ -2,6 +2,11 @@
 
 A Java 8 program for the INFO0062 Object-Oriented Programming course at ULiège.
 
+Authors : 
+BANDIN Thomas
+SCHUMACHER Maxime 
+
+This repository contains the project asked. We took the liberty of adding a display, timer and a puzzle generator as proposed by Loïc when talking about the project. 
 ---
 
 ## Compile and run
