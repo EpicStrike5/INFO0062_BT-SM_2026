@@ -1,21 +1,13 @@
 package be.uliege.montefiore.oop;
 
-/*
- * Central code of all error messages for the puzzle program.
- * Each error is a static method so call sites stay clean and all
- * wording lives in one place.
- */
 public class PuzzleError {
 
-    // Utility class: no instances should be created.
     private PuzzleError() {}
 
-    // File errors
     public static void fileNotFound(String filename) {
         System.err.println("Error: file not found: " + filename);
     }
 
-    // Feasibility errors — checked before backtracking starts
     public static void wrongFlatCount(int needed, int found) {
         System.err.println("Error: wrong number of flat sides — need "
                 + needed + " (the perimeter), found " + found + ".");
@@ -42,7 +34,6 @@ public class PuzzleError {
                 + needed + ", found " + found + ".");
     }
 
-    // Solver and CLI errors
     public static void noSolution(String filename) {
         System.err.println("Error: no solution found for: " + filename);
     }

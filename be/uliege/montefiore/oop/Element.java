@@ -1,17 +1,5 @@
 package be.uliege.montefiore.oop;
 
-/*
- * Abstract base class for all puzzle pieces.
- *
- * Every piece has four sides in clockwise order: top, right, bottom, left.
- * Each side is one of:
- *   F = Flat  (sits on the outer border of the puzzle)
- *   B = Bump  (protrudes outward, fits into a Pit)
- *   P = Pit   (recessed inward, accepts a Bump)
- *
- * Pieces are immutable after creation. Use the factory method Element.of(sides)
- * instead of calling a constructor directly, it picks the right subtype based on the number of flat sides.
- */
 public abstract class Element {
 
     private final char top;
@@ -19,7 +7,6 @@ public abstract class Element {
     private final char bottom;
     private final char left;
 
-    // Called by each subclass constructor via super(sides).
     public Element(char[] sides) {
         this.top = sides[0];
         this.right = sides[1];
@@ -43,17 +30,6 @@ public abstract class Element {
         return left;
     }
 
-    /*
-     * Factory method — call this instead of using constructors directly.
-     * It inspects the flat sides to decide which subtype to create:
-     *
-     *   Two adjacent flat sides  →  CornerPiece  (goes in a grid corner)
-     *   Exactly one flat side    →  EdgePiece    (goes along a grid border)
-     *   No flat sides            →  InsidePiece  (goes in the interior)
-     *
-     * We check adjacent flats because that's the stricter condition —
-     * a corner piece also has at least one flat, so order matters here.
-     */
     public static Element of(char[] sides) {
         boolean adjacentFlats =
             (sides[0] == 'F' && sides[1] == 'F') ||
@@ -73,23 +49,9 @@ public abstract class Element {
         return new InsidePiece(sides);
     }
 
-    /*
-     * Returns a new piece rotated clockwise by the given number of quarter-turns.
-     * The original piece is never modified, we compute new side values in local
-     * variables and pass them to Element.of() at the end.
-     *
-     * One clockwise quarter-turn shifts the sides like this:
-     *   new top    = old left
-     *   new right  = old top
-     *   new bottom = old right
-     *   new left   = old bottom
-     */
     public Element rotate(int times) {
-        // We copy the four sides into local variables so we can shuffle them
-        // without touching the final fields.
         char t = top, r = right, b = bottom, l = left;
         for (int i = 0; i < times; i++) {
-            // We use a temporary variable to do a four-way circular shift in place.
             char temp = r;
             r = t;
             t = l;
@@ -99,15 +61,7 @@ public abstract class Element {
         return Element.of(new char[]{ t, r, b, l });
     }
 
-    /*
-     * Returns true if this piece is compatible with a neighbour in the given direction.
-     *   0 = neighbour is above  (this.top    must match neighbour.bottom)
-     *   1 = neighbour is right  (this.right  must match neighbour.left)
-     *   2 = neighbour is below  (this.bottom must match neighbour.top)
-     *   3 = neighbour is left   (this.left   must match neighbour.right)
-     *
-     * Valid pairings: F–F, B–P, P–B.
-     */
+    // direction: 0=above, 1=right, 2=below, 3=left
     public boolean isCompatibleWith(Element neighbour, int direction) {
         switch (direction) {
             case 0: return sidesMatch(this.top, neighbour.bottom);
