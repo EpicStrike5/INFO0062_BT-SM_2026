@@ -27,10 +27,21 @@ public abstract class Element {
         this.left = sides[3];
     }
 
-    public char getTop()    { return top; }
-    public char getRight()  { return right; }
-    public char getBottom() { return bottom; }
-    public char getLeft()   { return left; }
+    public char getTop() {
+        return top;
+    }
+
+    public char getRight() {
+        return right;
+    }
+
+    public char getBottom() {
+        return bottom;
+    }
+
+    public char getLeft() {
+        return left;
+    }
 
     /*
      * Factory method — call this instead of using constructors directly.

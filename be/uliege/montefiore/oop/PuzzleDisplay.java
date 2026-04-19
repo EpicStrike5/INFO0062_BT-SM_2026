@@ -371,8 +371,13 @@ public class PuzzleDisplay extends JPanel {
         return PADDING / 2 + 4 + 30 + rows * (SMALL_SIZE + GAP) + PADDING / 2;
     }
 
-    private float pixelX(int col) { return PADDING + col * CELL_SIZE; }
-    private float pixelY(int row) { return PADDING + row * CELL_SIZE; }
+    private float pixelX(int col) {
+        return PADDING + col * CELL_SIZE;
+    }
+
+    private float pixelY(int row) {
+        return PADDING + row * CELL_SIZE;
+    }
 
     // Opens the display window on the Swing Event Dispatch Thread.
     // Swing requires all UI work to happen on the EDT — invokeLater() schedules it.

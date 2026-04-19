@@ -17,6 +17,11 @@ public class Placement {
         this.rotation = rotation;
     }
 
-    public int getIndex()    { return index; }
-    public int getRotation() { return rotation; }
+    public int getIndex() {
+        return index;
+    }
+
+    public int getRotation() {
+        return rotation;
+    }
 }

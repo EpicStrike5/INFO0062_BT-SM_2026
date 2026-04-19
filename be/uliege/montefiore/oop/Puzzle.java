@@ -28,20 +28,45 @@ public class Puzzle {
         this.pieces = pieces;
     }
 
-    public int getWidth() { return width; }
-    public void setWidth(int width) { this.width = width; }
+    public int getWidth() {
+        return width;
+    }
 
-    public int getHeight() { return height; }
-    public void setHeight(int height) { this.height = height; }
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-    public ArrayList<Element> getPieces() { return pieces; }
-    public void setPieces(ArrayList<Element> p) { this.pieces = p; }
+    public int getHeight() {
+        return height;
+    }
 
-    public void markUsed(int i, boolean value) { used[i] = value; }
-    public boolean isUsed(int i)               { return used[i]; }
+    public void setHeight(int height) {
+        this.height = height;
+    }
 
-    public void setPlacement(Placement p, int row, int col) { grid[row][col] = p; }
-    public Placement getPlacement(int row, int col)         { return grid[row][col]; }
+    public ArrayList<Element> getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(ArrayList<Element> p) {
+        this.pieces = p;
+    }
+
+    public void markUsed(int i, boolean value) {
+        used[i] = value;
+    }
+
+    public boolean isUsed(int i) {
+        return used[i];
+    }
+
+    public void setPlacement(Placement p, int row, int col) {
+        grid[row][col] = p;
+    }
+
+    public Placement getPlacement(int row, int col) {
+        return grid[row][col];
+    }
 
     // Allocates the solution grid and the used-piece flags. Call this before solving.
     public void initialize() {
