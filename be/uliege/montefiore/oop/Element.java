@@ -50,12 +50,14 @@ public abstract class Element {
             (sides[2] == 'F' && sides[3] == 'F') ||
             (sides[3] == 'F' && sides[0] == 'F');
 
-        if (adjacentFlats) return new CornerPiece(sides);
+        if (adjacentFlats)
+            return new CornerPiece(sides);
 
         boolean anyFlat = sides[0] == 'F' || sides[1] == 'F' ||
                           sides[2] == 'F' || sides[3] == 'F';
 
-        if (anyFlat) return new EdgePiece(sides);
+        if (anyFlat)
+            return new EdgePiece(sides);
 
         return new InsidePiece(sides);
     }

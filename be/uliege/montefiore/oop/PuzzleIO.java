@@ -37,7 +37,8 @@ public class PuzzleIO {
             int expected = width * height;
             String line;
             while ((line = reader.readLine()) != null && pieces.size() < expected) {
-                if (line.trim().isEmpty()) continue;
+                if (line.trim().isEmpty())
+                    continue;
                 char[] sides = { line.charAt(0), line.charAt(1), line.charAt(2), line.charAt(3) };
                 // Element.of() picks the right subtype (CornerPiece, EdgePiece, InsidePiece).
                 pieces.add(Element.of(sides));
@@ -66,7 +67,8 @@ public class PuzzleIO {
             writer.println(width + " " + height);
             for (int i = 0; i < width * height; i++) {
                 StringBuilder line = new StringBuilder();
-                for (int j = 0; j < 4; j++) line.append(sides[random.nextInt(3)]);
+                for (int j = 0; j < 4; j++)
+                    line.append(sides[random.nextInt(3)]);
                 writer.println(line);
             }
         } catch (IOException e) {

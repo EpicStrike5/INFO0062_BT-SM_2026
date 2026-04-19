@@ -18,26 +18,29 @@ public class PuzzleSolver {
     // Utility class: no instances should be created.
     private PuzzleSolver() {}
 
-    // Time budget for the partial-solve interior search (display mode only).
+    // Timeout for the partial-solve interior search (display mode only).
     // If backtracking hasn't finished within this limit, we stop and show
     // whatever best state was found so far.
+    // Helps in reducing long computation at the price of accuracy.
     private static final long PARTIAL_SOLVE_TIMEOUT_MS = 3000L;
 
     // Deadline set once at the start of each partialSolve() call.
-    // Safe as a static field because the program is single-threaded.
     private static long partialSolveDeadline;
 
     // Tries to solve the puzzle. Returns true and stores the solution inside the
     // puzzle object if successful, false otherwise.
     public static boolean solve(Puzzle puzzle) {
-        if (!checkFeasibility(puzzle)) return false;
+        if (!checkFeasibility(puzzle))
+            return false;
 
         List<int[]> borderCells = buildBorderCells(puzzle.getWidth(), puzzle.getHeight());
-        if (!fillBorder(puzzle, 0, borderCells)) return false;
+        if (!fillBorder(puzzle, 0, borderCells))
+            return false;
 
         // Only puzzles wider and taller than 2 have interior cells to fill.
         if (puzzle.getWidth() > 2 && puzzle.getHeight() > 2) {
-            if (!fillInterior(puzzle, 1, 1)) return false;
+            if (!fillInterior(puzzle, 1, 1))
+                return false;
         }
 
         return true;
@@ -58,13 +61,19 @@ public class PuzzleSolver {
 
         for (Element e : puzzle.getPieces()) {
             for (char side : new char[]{ e.getTop(), e.getRight(), e.getBottom(), e.getLeft() }) {
-                if (side == 'F') totalF++;
-                else if (side == 'B') totalB++;
-                else totalP++;
+                if (side == 'F') 
+                    totalF++;
+                else if (side == 'B') 
+                    totalB++;
+                else 
+                    totalP++;
             }
-            if (e instanceof CornerPiece) corners++;
-            else if (e instanceof EdgePiece) edges++;
-            else insides++;
+            if (e instanceof CornerPiece)
+                corners++;
+            else if (e instanceof EdgePiece)
+                edges++;
+            else
+                insides++;
         }
 
         // A valid puzzle's border has exactly 2*(width + height) outer-facing edges,
@@ -89,9 +98,18 @@ public class PuzzleSolver {
             int neededEdges = 2 * (w - 2) + 2 * (h - 2);
             int neededInsides = (w - 2) * (h - 2);
 
-            if (corners != neededCorners) { PuzzleError.wrongCornerCount(neededCorners, corners); return false; }
-            if (edges != neededEdges) { PuzzleError.wrongEdgeCount(neededEdges, edges); return false; }
-            if (insides != neededInsides) { PuzzleError.wrongInsideCount(neededInsides, insides); return false; }
+            if (corners != neededCorners) {
+                PuzzleError.wrongCornerCount(neededCorners, corners);
+                return false;
+            }
+            if (edges != neededEdges) {
+                PuzzleError.wrongEdgeCount(neededEdges, edges);
+                return false;
+            }
+            if (insides != neededInsides) {
+                PuzzleError.wrongInsideCount(neededInsides, insides);
+                return false;
+            }
         }
 
         return true;
@@ -106,19 +124,25 @@ public class PuzzleSolver {
         // A thin puzzle (one row or one column) has no distinct sides,
         // so we just list cells linearly to avoid duplicates.
         if (h == 1) {
-            for (int c = 0; c < w; c++) cells.add(new int[]{0, c});
+            for (int c = 0; c < w; c++)
+                cells.add(new int[]{0, c});
             return cells;
         }
         if (w == 1) {
-            for (int r = 0; r < h; r++) cells.add(new int[]{r, 0});
+            for (int r = 0; r < h; r++)
+                cells.add(new int[]{r, 0});
             return cells;
         }
 
         // General case: clockwise from top-left corner.
-        for (int c = 0; c < w; c++) cells.add(new int[]{0, c}); // top row
-        for (int r = 1; r < h; r++) cells.add(new int[]{r, w - 1}); // right column
-        for (int c = w - 2; c >= 0; c--) cells.add(new int[]{h - 1, c}); // bottom row
-        for (int r = h - 2; r >= 1; r--) cells.add(new int[]{r, 0}); // left column
+        for (int c = 0; c < w; c++) // top row
+            cells.add(new int[]{0, c});
+        for (int r = 1; r < h; r++) // right column
+            cells.add(new int[]{r, w - 1});
+        for (int c = w - 2; c >= 0; c--) // bottom row
+            cells.add(new int[]{h - 1, c});
+        for (int r = h - 2; r >= 1; r--) // left column
+            cells.add(new int[]{r, 0});
 
         return cells;
     }
@@ -129,7 +153,8 @@ public class PuzzleSolver {
     private static boolean fillBorder(Puzzle puzzle, int cellIndex, List<int[]> borderCells) {
 
         // Base case: all border cells are filled, the border is complete.
-        if (cellIndex == borderCells.size()) return true;
+        if (cellIndex == borderCells.size())
+            return true;
 
         int row = borderCells.get(cellIndex)[0];
         int col = borderCells.get(cellIndex)[1];
@@ -143,23 +168,29 @@ public class PuzzleSolver {
         // If the piece fits the position and matches its already-placed neighbours,
         // place it and recurse. If the recursion fails, undo and try the next option.
         for (int i = 0; i < puzzle.getPieces().size(); i++) {
-            if (puzzle.isUsed(i)) continue;
+            if (puzzle.isUsed(i))
+                continue;
             Element piece = puzzle.getPieces().get(i);
 
             if (!isThinPuzzle) {
-                if (isCorner && !(piece instanceof CornerPiece)) continue;
-                if (!isCorner && !(piece instanceof EdgePiece)) continue;
+                if (isCorner && !(piece instanceof CornerPiece))
+                    continue;
+                if (!isCorner && !(piece instanceof EdgePiece))
+                    continue;
             }
 
             for (int rot = 0; rot < 4; rot++) {
                 Element rotated = piece.rotate(rot);
-                if (!fitsPosition(rotated, row, col, w, h)) continue;
-                if (!matchesNeighbours(rotated, row, col, puzzle)) continue;
+                if (!fitsPosition(rotated, row, col, w, h))
+                    continue;
+                if (!matchesNeighbours(rotated, row, col, puzzle))
+                    continue;
 
                 puzzle.setPlacement(new Placement(i, rot), row, col);
                 puzzle.markUsed(i, true);
 
-                if (fillBorder(puzzle, cellIndex + 1, borderCells)) return true;
+                if (fillBorder(puzzle, cellIndex + 1, borderCells))
+                    return true;
 
                 // This rotation/piece didn't lead to a solution — undo and keep trying.
                 puzzle.setPlacement(null, row, col);
@@ -178,7 +209,8 @@ public class PuzzleSolver {
         int h = puzzle.getHeight();
 
         // Base case: we've stepped past the last interior row — done.
-        if (row == h - 1) return true;
+        if (row == h - 1)
+            return true;
 
         // Advance to the next interior cell. When we reach the right border,
         // we wrap to the first interior column of the next row.
@@ -186,19 +218,24 @@ public class PuzzleSolver {
         int nextRow = (col + 1 == w - 1) ? row + 1 : row;
 
         for (int i = 0; i < puzzle.getPieces().size(); i++) {
-            if (puzzle.isUsed(i)) continue;
+            if (puzzle.isUsed(i))
+                continue;
             Element piece = puzzle.getPieces().get(i);
-            if (!(piece instanceof InsidePiece)) continue;
+            if (!(piece instanceof InsidePiece))
+                continue;
 
             for (int rot = 0; rot < 4; rot++) {
                 Element rotated = piece.rotate(rot);
-                if (!fitsPosition(rotated, row, col, w, h)) continue;
-                if (!matchesNeighbours(rotated, row, col, puzzle)) continue;
+                if (!fitsPosition(rotated, row, col, w, h))
+                    continue;
+                if (!matchesNeighbours(rotated, row, col, puzzle))
+                    continue;
 
                 puzzle.setPlacement(new Placement(i, rot), row, col);
                 puzzle.markUsed(i, true);
 
-                if (fillInterior(puzzle, nextRow, nextCol)) return true;
+                if (fillInterior(puzzle, nextRow, nextCol))
+                    return true;
 
                 // Backtrack.
                 puzzle.setPlacement(null, row, col);
@@ -214,14 +251,22 @@ public class PuzzleSolver {
     // The second block checks inner-facing sides — they must not be flat
     // because they will connect to a neighbour.
     private static boolean fitsPosition(Element e, int row, int col, int width, int height) {
-        if (row == 0 && e.getTop() != 'F') return false;
-        if (row == height - 1 && e.getBottom() != 'F') return false;
-        if (col == 0 && e.getLeft() != 'F') return false;
-        if (col == width - 1 && e.getRight() != 'F') return false;
-        if (row > 0 && e.getTop() == 'F') return false;
-        if (row < height - 1 && e.getBottom() == 'F') return false;
-        if (col > 0 && e.getLeft() == 'F') return false;
-        if (col < width - 1 && e.getRight() == 'F') return false;
+        if (row == 0 && e.getTop() != 'F')
+            return false;
+        if (row == height - 1 && e.getBottom() != 'F')
+            return false;
+        if (col == 0 && e.getLeft() != 'F')
+            return false;
+        if (col == width - 1 && e.getRight() != 'F')
+            return false;
+        if (row > 0 && e.getTop() == 'F')
+            return false;
+        if (row < height - 1 && e.getBottom() == 'F')
+            return false;
+        if (col > 0 && e.getLeft() == 'F')
+            return false;
+        if (col < width - 1 && e.getRight() == 'F')
+            return false;
         return true;
     }
 
@@ -233,13 +278,17 @@ public class PuzzleSolver {
         int h = puzzle.getHeight();
 
         if (row > 0 && puzzle.getPlacement(row - 1, col) != null)
-            if (!e.isCompatibleWith(effectivePiece(puzzle, row - 1, col), 0)) return false;
+            if (!e.isCompatibleWith(effectivePiece(puzzle, row - 1, col), 0))
+                return false;
         if (col > 0 && puzzle.getPlacement(row, col - 1) != null)
-            if (!e.isCompatibleWith(effectivePiece(puzzle, row, col - 1), 3)) return false;
+            if (!e.isCompatibleWith(effectivePiece(puzzle, row, col - 1), 3))
+                return false;
         if (col < w - 1 && puzzle.getPlacement(row, col + 1) != null)
-            if (!e.isCompatibleWith(effectivePiece(puzzle, row, col + 1), 1)) return false;
+            if (!e.isCompatibleWith(effectivePiece(puzzle, row, col + 1), 1))
+                return false;
         if (row < h - 1 && puzzle.getPlacement(row + 1, col) != null)
-            if (!e.isCompatibleWith(effectivePiece(puzzle, row + 1, col), 2)) return false;
+            if (!e.isCompatibleWith(effectivePiece(puzzle, row + 1, col), 2))
+                return false;
 
         return true;
     }
@@ -285,7 +334,8 @@ public class PuzzleSolver {
         }
 
         void update(Puzzle puzzle, int filledCells) {
-            if (filledCells <= bestCount) return;
+            if (filledCells <= bestCount)
+                return;
             bestCount = filledCells;
             // Copy the grid and used-flags into our snapshot arrays.
             int h = puzzle.getHeight();
@@ -317,7 +367,8 @@ public class PuzzleSolver {
     // immediately dives into the interior so we can snapshot mid-interior states too.
     private static boolean partialFillBorder(Puzzle puzzle, int cellIndex,
                                              List<int[]> borderCells, BestPartial best) {
-        if (System.currentTimeMillis() > partialSolveDeadline) return true;
+        if (System.currentTimeMillis() > partialSolveDeadline)
+            return true;
         best.update(puzzle, cellIndex);
 
         if (cellIndex == borderCells.size()) {
@@ -336,23 +387,29 @@ public class PuzzleSolver {
         boolean isCorner = (row == 0 || row == h - 1) && (col == 0 || col == w - 1);
 
         for (int i = 0; i < puzzle.getPieces().size(); i++) {
-            if (puzzle.isUsed(i)) continue;
+            if (puzzle.isUsed(i))
+                continue;
             Element piece = puzzle.getPieces().get(i);
 
             if (!isThinPuzzle) {
-                if (isCorner && !(piece instanceof CornerPiece)) continue;
-                if (!isCorner && !(piece instanceof EdgePiece)) continue;
+                if (isCorner && !(piece instanceof CornerPiece))
+                    continue;
+                if (!isCorner && !(piece instanceof EdgePiece))
+                    continue;
             }
 
             for (int rot = 0; rot < 4; rot++) {
                 Element rotated = piece.rotate(rot);
-                if (!fitsPosition(rotated, row, col, w, h)) continue;
-                if (!matchesNeighbours(rotated, row, col, puzzle)) continue;
+                if (!fitsPosition(rotated, row, col, w, h))
+                    continue;
+                if (!matchesNeighbours(rotated, row, col, puzzle))
+                    continue;
 
                 puzzle.setPlacement(new Placement(i, rot), row, col);
                 puzzle.markUsed(i, true);
 
-                if (partialFillBorder(puzzle, cellIndex + 1, borderCells, best)) return true;
+                if (partialFillBorder(puzzle, cellIndex + 1, borderCells, best))
+                    return true;
 
                 puzzle.setPlacement(null, row, col);
                 puzzle.markUsed(i, false);
@@ -366,7 +423,8 @@ public class PuzzleSolver {
     // keep exploring and record the deepest state, not just the first valid one.
     private static void partialFillInterior(Puzzle puzzle, int row, int col,
                                             int borderSize, BestPartial best) {
-        if (System.currentTimeMillis() > partialSolveDeadline) return;
+        if (System.currentTimeMillis() > partialSolveDeadline)
+            return;
 
         int w = puzzle.getWidth();
         int h = puzzle.getHeight();
@@ -374,20 +432,25 @@ public class PuzzleSolver {
         int interiorPlaced = (row - 1) * (w - 2) + (col - 1);
         best.update(puzzle, borderSize + interiorPlaced);
 
-        if (row == h - 1) return;
+        if (row == h - 1)
+            return;
 
         int nextCol = (col + 1 == w - 1) ? 1 : col + 1;
         int nextRow = (col + 1 == w - 1) ? row + 1 : row;
 
         for (int i = 0; i < puzzle.getPieces().size(); i++) {
-            if (puzzle.isUsed(i)) continue;
+            if (puzzle.isUsed(i))
+                continue;
             Element piece = puzzle.getPieces().get(i);
-            if (!(piece instanceof InsidePiece)) continue;
+            if (!(piece instanceof InsidePiece))
+                continue;
 
             for (int rot = 0; rot < 4; rot++) {
                 Element rotated = piece.rotate(rot);
-                if (!fitsPosition(rotated, row, col, w, h)) continue;
-                if (!matchesNeighbours(rotated, row, col, puzzle)) continue;
+                if (!fitsPosition(rotated, row, col, w, h))
+                    continue;
+                if (!matchesNeighbours(rotated, row, col, puzzle))
+                    continue;
 
                 puzzle.setPlacement(new Placement(i, rot), row, col);
                 puzzle.markUsed(i, true);

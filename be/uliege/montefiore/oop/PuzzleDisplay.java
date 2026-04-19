@@ -128,7 +128,8 @@ public class PuzzleDisplay extends JPanel {
         for (int row = 0; row < h; row++) {
             for (int col = 0; col < w; col++) {
                 Placement p = puzzle.getPlacement(row, col);
-                if (p == null) continue;
+                if (p == null)
+                    continue;
 
                 Element e = getEffective(p);
                 Path2D path = buildPath(e, pixelX(col), pixelY(row), CELL_SIZE);
@@ -176,7 +177,8 @@ public class PuzzleDisplay extends JPanel {
         for (int row = 0; row < h; row++) {
             for (int col = 0; col < w; col++) {
                 Placement p = puzzle.getPlacement(row, col);
-                if (p == null) continue;
+                if (p == null)
+                    continue;
 
                 String label = String.valueOf(p.getIndex() + 1);
                 int tx = (int)(pixelX(col) + CELL_SIZE / 2f - fm.stringWidth(label) / 2f);
@@ -201,7 +203,8 @@ public class PuzzleDisplay extends JPanel {
     // Each piece is shown in its original orientation (rotation 0) since it was never placed.
     private void drawUnplacedPieces(Graphics2D g2) {
         List<Integer> unplaced = getUnplacedIndices();
-        if (unplaced.isEmpty()) return;
+        if (unplaced.isEmpty())
+            return;
 
         int mainW = puzzle.getWidth() * CELL_SIZE + 2 * PADDING;
         int startY = puzzle.getHeight() * CELL_SIZE + 2 * PADDING;
@@ -350,7 +353,8 @@ public class PuzzleDisplay extends JPanel {
     private List<Integer> getUnplacedIndices() {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < puzzle.getPieces().size(); i++)
-            if (!puzzle.isUsed(i)) result.add(i);
+            if (!puzzle.isUsed(i))
+                result.add(i);
         return result;
     }
 
@@ -358,7 +362,8 @@ public class PuzzleDisplay extends JPanel {
     // Returns 0 if all pieces were placed (normal solved puzzle).
     private int unplacedAreaHeight() {
         List<Integer> unplaced = getUnplacedIndices();
-        if (unplaced.isEmpty()) return 0;
+        if (unplaced.isEmpty())
+            return 0;
         int mainW = puzzle.getWidth() * CELL_SIZE + 2 * PADDING;
         int availW = mainW - 2 * PADDING;
         int cols = Math.max(1, availW / (SMALL_SIZE + GAP));
@@ -377,7 +382,10 @@ public class PuzzleDisplay extends JPanel {
                 // Check if any piece is unplaced so we can mark the title "unsolvable".
                 boolean partial = false;
                 for (int i = 0; i < puzzle.getPieces().size(); i++)
-                    if (!puzzle.isUsed(i)) { partial = true; break; }
+                    if (!puzzle.isUsed(i)) {
+                        partial = true;
+                        break;
+                    }
 
                 String title = "Puzzle  " + puzzle.getWidth() + " \u00d7 " + puzzle.getHeight()
                     + "  (" + puzzle.getPieces().size() + " pieces)"

@@ -70,10 +70,16 @@ public class Puzzle {
         List<String> positional = new ArrayList<String>();
 
         for (String arg : args) {
-            if (arg.equals("--display")) showDisplay = true;
-            else if (arg.equals("--timer")) showTimer = true;
-            else if (arg.startsWith("--")) { PuzzleError.unknownFlag(arg); return; }
-            else positional.add(arg);
+            if (arg.equals("--display"))
+                showDisplay = true;
+            else if (arg.equals("--timer"))
+                showTimer = true;
+            else if (arg.startsWith("--")) {
+                PuzzleError.unknownFlag(arg);
+                return;
+            }
+            else
+                positional.add(arg);
         }
 
         // One positional arg means the user gave a file to solve.
@@ -87,7 +93,8 @@ public class Puzzle {
             try {
                 int w = Integer.parseInt(positional.get(0));
                 int h = Integer.parseInt(positional.get(1));
-                if (!PuzzleIO.generatePuzzle(w, h)) return;
+                if (!PuzzleIO.generatePuzzle(w, h))
+                    return;
                 filename = "puzzle_generated.txt";
             } catch (NumberFormatException e) {
                 PuzzleError.wrongUsage();
@@ -101,7 +108,8 @@ public class Puzzle {
 
         // We create a blank Puzzle object and let PuzzleIO fill in its fields.
         Puzzle puzzle = new Puzzle(0, 0, null);
-        if (!PuzzleIO.loadPuzzle(filename, puzzle)) return;
+        if (!PuzzleIO.loadPuzzle(filename, puzzle))
+            return;
 
         puzzle.initialize();
 
@@ -122,7 +130,8 @@ public class Puzzle {
                     System.out.println((p.getIndex() + 1) + " " + p.getRotation());
                 }
             }
-            if (showDisplay) PuzzleDisplay.show(puzzle);
+            if (showDisplay)
+                PuzzleDisplay.show(puzzle);
 
         } else {
             PuzzleError.noSolution(filename);
