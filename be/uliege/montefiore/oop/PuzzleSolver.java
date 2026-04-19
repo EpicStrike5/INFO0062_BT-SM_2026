@@ -8,7 +8,7 @@ public class PuzzleSolver {
 
     private PuzzleSolver() {}
 
-    // timeout for partialSolve — we stop after 3s and show the best state found
+    // timeout for partialSolve, we stop after 3s and show the best state found
     private static final long PARTIAL_SOLVE_TIMEOUT_MS = 3000L;
 
     private static long partialSolveDeadline;
@@ -66,7 +66,7 @@ public class PuzzleSolver {
             return false;
         }
 
-        // skip thin puzzles (1 row/col) — piece-type counts don't apply there
+        // skip thin puzzles (1 row/col), piece-type counts don't apply there
         if (w >= 2 && h >= 2) {
             int neededCorners = 4;
             int neededEdges = 2 * (w - 2) + 2 * (h - 2);
